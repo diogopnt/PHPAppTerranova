@@ -1,0 +1,26 @@
+{
+    "name": "xptp",
+    "description": "Parse XML product files to import in Drupal",
+    "type": "library",
+    "keywords": [
+        "xml",
+        "parse"
+    ],
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Diogo",
+            "email": "example@example.pt"
+        }
+    ],
+    "require": {
+        "symfony/console": "^6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Console\\": "src/"
+        },
+        "classmap": ["src"]
+    }
+}
