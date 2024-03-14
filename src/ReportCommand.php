@@ -24,10 +24,11 @@ class ReportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         //URL D10
-        $baseUrl = "https://terranova-d10.pictonio.pt/";
+        $baseUrl = "https://terranova-d10.pictonio.pt"; //erro a concatenar
 
         //Read the XML File
-        $xmlFile = $input->getArgument(simplexml_load_file('file'));
+        //$xmlFile = $input->getArgument(simplexml_load_file('file'));
+        $xmlFile = simplexml_load_file($input->getArgument('file'));
 
         if ($xmlFile === false) {
 
