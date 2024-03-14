@@ -30,6 +30,10 @@ class ComposerStaticInit8bd5477be28b7ac6bb652a497395f3c3
         array (
             'Psr\\Container\\' => 14,
         ),
+        'C' => 
+        array (
+            'Console\\' => 8,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -65,9 +69,14 @@ class ComposerStaticInit8bd5477be28b7ac6bb652a497395f3c3
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'Console\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
     );
 
     public static $classMap = array (
+        'App\\Command\\ReportCommand' => __DIR__ . '/../..' . '/src/ReportCommand.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
     );

@@ -1,17 +1,16 @@
 {
-    "name": "xptp",
-    "description": "Parse XML product files to import in Drupal",
+    "name": "appphp/terranova",
+    "description": "Report de URL´S que não estão ativos",
     "type": "library",
     "keywords": [
         "xml",
         "parse"
     ],
     "license": "MIT",
-
     "authors": [
         {
-            "name": "Diogo",
-            "email": "example@example.pt"
+            "name": "Diogo Pinto",
+            "email": "pintodiogo@ua.pt"
         }
     ],
     "require": {
