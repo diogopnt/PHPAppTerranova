@@ -63,4 +63,9 @@ class TitleValidatorCommand extends Command
             return "Meta " . $meta[1][$i] . ": " . $meta[2][$i] . "<br>";
         }*/
     }
+
+    protected static function comparePageTitle($title, $urlPageTitle)
+    {
+        
+    }
 }
