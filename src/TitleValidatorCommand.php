@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class ReportCommand extends Command
+class TitleValidatorCommand extends Command
 {
     protected static $defaultName = 'app:titleValidator';
 
@@ -23,8 +23,44 @@ class ReportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        
+        $baseUrl = "https://terranova-d10.pictonio.pt";
+
+        // Read the XML File
+        $xmlFile = simplexml_load_file($input->getArgument('file'));
+
+        if ($xmlFile === false) {
+            $output->writeln("<error>Não foi possível ler o arquivo XML</error>");
+            return Command::FAILURE;
+        }
+
+        foreach ($xmlFile->node as $node) {
+            $title = (string) $node->title->a;
+            $href = (string) $node->title->a['href'];
+
+            $url = $baseUrl . $href;
+
+            /*
+            $results = $url . PHP_EOL . "\n" . $title;
+            $output->writeln($results); */
+
+            $pageTitle = self::checkURLPageTitle($url);
+
+            echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
+        }
     }
 
 
+    protected static function checkURLPageTitle($url)
+    {
+
+        $html = file_get_contents($url);
+        preg_match("/<title>(.+)<\/title>/i", $html, $title);
+        preg_match_all('/<meta .*?name=["\']?([^"\']+)["\']? .*?content=["\']([^"\']+)["\'].*?>/i', $html, $meta);
+
+        echo "Title: " . $title[1];
+        /*
+        for ($i = 0; $i < count($meta[1]); $i++) {
+            return "Meta " . $meta[1][$i] . ": " . $meta[2][$i] . "<br>";
+        }*/
+    }
 }
