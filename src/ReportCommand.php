@@ -50,8 +50,10 @@ class ReportCommand extends Command
 
             if ($status == "URL não encontrada (status 404)") {
                 $inactiveURLS[] = $url;
+                echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
             } elseif ($status == "URL encontrada") {
                 $activeURLS[] = $url;
+                echo "URL encontrada: " . $url . PHP_EOL . "\n";
             }
         }
 
