@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Command\\ReportCommand' => $baseDir . '/src/ReportCommand.php',
+    'App\\Command\\TitleValidatorCommand' => $baseDir . '/src/TitleValidatorCommand.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Normalizer' => $vendorDir . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
 );

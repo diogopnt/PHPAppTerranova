@@ -46,6 +46,7 @@ class TitleValidatorCommand extends Command
             $pageTitle = self::checkURLPageTitle($url);
 
             echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
+            //echo $title . "\n";
         }
     }
 
@@ -57,7 +58,7 @@ class TitleValidatorCommand extends Command
         preg_match("/<title>(.+)<\/title>/i", $html, $title);
         preg_match_all('/<meta .*?name=["\']?([^"\']+)["\']? .*?content=["\']([^"\']+)["\'].*?>/i', $html, $meta);
 
-        echo "Title: " . $title[1];
+        return "Title: " . $title[1];
         /*
         for ($i = 0; $i < count($meta[1]); $i++) {
             return "Meta " . $meta[1][$i] . ": " . $meta[2][$i] . "<br>";
@@ -66,6 +67,6 @@ class TitleValidatorCommand extends Command
 
     protected static function comparePageTitle($title, $urlPageTitle)
     {
-        
+
     }
 }

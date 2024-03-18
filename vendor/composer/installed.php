@@ -3,7 +3,7 @@
         'name' => 'appphp/terranova',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'c178269e6daea48686c4b6ceac22340fe979a7a6',
+        'reference' => '87c9b7ed3e39c4d81f55e50521febd4758f366d0',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'appphp/terranova' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'c178269e6daea48686c4b6ceac22340fe979a7a6',
+            'reference' => '87c9b7ed3e39c4d81f55e50521febd4758f366d0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
