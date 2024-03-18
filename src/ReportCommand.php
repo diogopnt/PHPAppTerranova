@@ -34,11 +34,17 @@ class ReportCommand extends Command
         $inactiveURLS = [];
         $activeURLS = []; 
 
+        echo "A carregar resultados...";
+
         // Loop to get all the href in the XML File
         foreach ($xmlFile->node as $node) {
             $href = (string) $node->title->a['href'];
 
             $url = $baseUrl . $href;
+
+            //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
+
+            //$output->writeln($results);
 
             $status = self::checkUrlStatus($url);
 
@@ -49,13 +55,28 @@ class ReportCommand extends Command
             }
         }
 
-        if (!empty($inactiveURLS)) {
-            $output->writeln("<comment>Páginas não encontradas (status 404):</comment>");
-            foreach ($inactiveURLS as $url) {
-                $output->writeln($url);
-            }
-        } else {
-            $output->writeln("<info>Todas as páginas foram encontradas</info>");
+        echo "Escolha qual dos reports pretende visualizar: \n 1. URL´s Válidos \n 2. URL´s inválidos";
+
+        $opcao = trim(fgets(STDIN));
+
+        switch ($opcao) {
+            case '1':
+                $output->writeln("Report de URL´s válidos.\n");
+                
+                foreach ($activeURLS as $urlV) {
+                    $output->writeln($urlV);
+                }
+                break;
+            case '2':
+                $output->writeln("Report de URL´s inválidos.\n");
+
+                foreach ($inactiveURLS as $urlI) {
+                    $output->writeln($urlI);
+                }
+                break;
+            default:
+                echo "Opção inválida. Por favor, escolha 1 ou 2.\n";
+                break;
         }
 
         return Command::SUCCESS;
