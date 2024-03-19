@@ -32,7 +32,7 @@ class ReportCommand extends Command
         }
 
         $inactiveURLS = [];
-        $activeURLS = []; 
+        $activeURLS = [];
 
         echo "A carregar resultados...";
 
@@ -57,29 +57,35 @@ class ReportCommand extends Command
             }
         }
 
-        echo "Escolha qual dos reports pretende visualizar: \n 1. URL´s Válidos \n 2. URL´s inválidos";
+        do {
+            echo "Escolha qual dos reports pretende visualizar: \n 1. URL´s Válidos \n 2. URL´s inválidos \n 3. Sair \n";
 
-        $opcao = trim(fgets(STDIN));
+            $opcao = trim(fgets(STDIN));
 
-        switch ($opcao) {
-            case '1':
-                $output->writeln("Report de URL´s válidos.\n");
-                
-                foreach ($activeURLS as $urlV) {
-                    $output->writeln($urlV);
-                }
-                break;
-            case '2':
-                $output->writeln("Report de URL´s inválidos.\n");
+            switch ($opcao) {
+                case '1':
+                    $output->writeln("Report de URL´s válidos.\n");
 
-                foreach ($inactiveURLS as $urlI) {
-                    $output->writeln($urlI);
-                }
-                break;
-            default:
-                echo "Opção inválida. Por favor, escolha 1 ou 2.\n";
-                break;
-        }
+                    foreach ($activeURLS as $urlV) {
+                        $output->writeln($urlV);
+                    }
+                    break;
+                case '2':
+                    $output->writeln("Report de URL´s inválidos.\n");
+
+                    foreach ($inactiveURLS as $urlI) {
+                        $output->writeln($urlI);
+                    }
+                    break;
+                case '3':
+                    $output->writeln("A sair do programa.... \n");
+                    break;
+                    
+                default:
+                    echo "Opção inválida. Por favor, escolha 1, 2 ou 3\n";
+                    break;
+            }
+        } while ($opcao != 3);
 
         return Command::SUCCESS;
     }
