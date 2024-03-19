@@ -25,6 +25,11 @@ class TitleValidatorCommand extends Command
     {
         $baseUrl = "https://terranova-d10.pictonio.pt";
 
+        //URL´S with the same page title
+        $spt = [];
+        //URL´S with a diferent page title
+        $dpt = [];
+
         // Read the XML File
         $xmlFile = simplexml_load_file($input->getArgument('file'));
 
@@ -34,10 +39,12 @@ class TitleValidatorCommand extends Command
         }
 
         foreach ($xmlFile->node as $node) {
-            $title = (string) $node->title->a;
+            $titleXML = (string) $node->title->a;
             $href = (string) $node->title->a['href'];
 
             $url = $baseUrl . $href;
+
+            $title = "Title: " . $titleXML . " | Terranova";
 
             /*
             $results = $url . PHP_EOL . "\n" . $title;
@@ -45,9 +52,50 @@ class TitleValidatorCommand extends Command
 
             $pageTitle = self::checkURLPageTitle($url);
 
-            echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
+            //echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
             //echo $title . "\n";
+
+            $result = self::comparePageTitle($title, $pageTitle);
+
+            if($result == "Titulos iguais"){
+                $spt[] = $pageTitle;
+                echo "Títulos iguais";
+            }elseif ($result == "Titulos diferentes"){
+                $dpt[] = $pageTitle;
+                echo "Títulos diferentes";
+            }
         }
+
+
+        do {
+            echo "Escolha qual dos reports pretende visualizar: \n 1. Títulos iguais \n 2. Títulos diferentes \n 3. Sair \n";
+
+            $opcao = trim(fgets(STDIN));
+
+            switch ($opcao) {
+                case '1':
+                    $output->writeln("Report de Títulos iguais.\n");
+
+                    foreach ($spt as $sptV) {
+                        $output->writeln($sptV);
+                    }
+                    break;
+                case '2':
+                    $output->writeln("Report de Títulos diferentes.\n");
+
+                    foreach ($dpt as $dptI) {
+                        $output->writeln($dptI);
+                    }
+                    break;
+                case '3':
+                    $output->writeln("A sair do programa.... \n");
+                    break;
+                    
+                default:
+                    echo "Opção inválida. Por favor, escolha 1, 2 ou 3\n";
+                    break;
+            }
+        } while ($opcao != 3);
 
         return Command::SUCCESS;
     }
@@ -94,5 +142,11 @@ class TitleValidatorCommand extends Command
 
     protected static function comparePageTitle($title, $urlPageTitle)
     {
+        if($title == $urlPageTitle){
+            return "Titulos iguais";
+        }elseif ($title != $urlPageTitle){
+            return "Titulos diferentes";
+        }
+
     }
 }
