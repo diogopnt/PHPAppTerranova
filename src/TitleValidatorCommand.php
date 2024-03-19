@@ -58,11 +58,11 @@ class TitleValidatorCommand extends Command
             $result = self::comparePageTitle($title, $pageTitle);
 
             if($result == "Titulos iguais"){
-                $spt[] = $pageTitle;
-                echo "Títulos iguais";
+                $spt[] = $pageTitle . " -> " . $url;
+                echo "Títulos iguais -> " . $url . "\n" ;
             }elseif ($result == "Titulos diferentes"){
-                $dpt[] = $pageTitle;
-                echo "Títulos diferentes";
+                $dpt[] = $pageTitle . "-> " . $url;
+                echo "Títulos diferentes -> " . $url . "\n";
             }
         }
 
