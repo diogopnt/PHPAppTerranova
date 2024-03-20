@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,6 +41,7 @@ class TitleValidatorCommand extends Command
 
             // Read the XML File
             $xmlFile = simplexml_load_file($input->getArgument('file'));
+            $records = $xmlFile->count();
 
             if ($xmlFile === false) {
                 $output->writeln("<error>Não foi possível ler o arquivo XML</error>");
@@ -53,6 +55,12 @@ class TitleValidatorCommand extends Command
                 return Command::FAILURE;
             } else {
                 echo "A carregar resultados... \n";
+
+                $progressBar = new ProgressBar($output, $records);
+
+                //$progressBar->setBarCharacter('<comment>....</comment>');
+                $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
+                $progressBar->start();
 
                 foreach ($xmlFile->node as $node) {
                     $titleXML = (string) $node->title->a;
@@ -80,16 +88,18 @@ class TitleValidatorCommand extends Command
                         $dpt[] = $pageTitle . "-> " . $url;
                         //echo "Títulos diferentes -> " . $url . "\n";
                     }
+
+                    $progressBar->advance();
                 }
 
                 if ($opcaoInput == 1) {
-                    $output->writeln("Report de Títulos iguais.\n");
+                    $output->writeln(" \n Report de Títulos iguais.\n");
 
                     foreach ($spt as $sptV) {
                         $output->writeln($sptV);
                     }
                 } elseif ($opcaoInput == 2) {
-                    $output->writeln("Report de Títulos diferentes.\n");
+                    $output->writeln("\n Report de Títulos diferentes.\n");
 
                     foreach ($dpt as $dptI) {
                         $output->writeln($dptI);
@@ -131,6 +141,8 @@ class TitleValidatorCommand extends Command
             $output->writeln("<error>URL não encontrada (status 404)</error>");
             return Command::FAILURE;
         }
+
+        $progressBar->finish();
 
         return Command::SUCCESS;
     }
