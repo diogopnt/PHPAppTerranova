@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +16,9 @@ class ReportCommand extends Command
     {
         $this
             ->setDescription('Report de URL´s falhados')
-            ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML');
+            ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML')
+            ->addArgument('int', InputArgument::REQUIRED, '1. URL´s Válidos 2. URL´s Inválidos')
+            ->setHelp("Escolha entre 1 ou 2 para obter o report que pretende");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -34,29 +37,51 @@ class ReportCommand extends Command
         $inactiveURLS = [];
         $activeURLS = [];
 
-        echo "A carregar resultados...";
+        $opcaoInput = $input->getArgument('int');
 
-        // Loop to get all the href in the XML File
-        foreach ($xmlFile->node as $node) {
-            $href = (string) $node->title->a['href'];
+        if ($opcaoInput != 1 && $opcaoInput != 2) {
+            $output->writeln("Opção inválida. Por favor escolha 1 ou 2");
+            return Command::FAILURE;
+        } else {
 
-            $url = $baseUrl . $href;
+            echo "A carregar resultados...";
 
-            //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
+            // Loop to get all the href in the XML File
+            foreach ($xmlFile->node as $node) {
+                $href = (string) $node->title->a['href'];
 
-            //$output->writeln($results);
+                $url = $baseUrl . $href;
 
-            $status = self::checkUrlStatus($url);
+                //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
 
-            if ($status == "URL não encontrada (status 404)") {
-                $inactiveURLS[] = $url;
-                echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
-            } elseif ($status == "URL encontrada") {
-                $activeURLS[] = $url;
-                echo "URL encontrada: " . $url . PHP_EOL . "\n";
+                //$output->writeln($results);
+
+                $status = self::checkUrlStatus($url);
+
+                if ($status == "URL não encontrada (status 404)") {
+                    $inactiveURLS[] = $url;
+                    echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
+                } elseif ($status == "URL encontrada") {
+                    $activeURLS[] = $url;
+                    echo "URL encontrada: " . $url . PHP_EOL . "\n";
+                }
+            }
+
+            if ($opcaoInput == 1) {
+                $output->writeln("Report de URL´s válidos.\n");
+
+                foreach ($activeURLS as $urlV) {
+                    $output->writeln($urlV);
+                }
+            } elseif ($opcaoInput == 2) {
+                $output->writeln("Report de URL´s inválidos.\n");
+
+                foreach ($inactiveURLS as $urlI) {
+                    $output->writeln($urlI);
+                }
             }
         }
-
+        /*
         do {
             echo "Escolha qual dos reports pretende visualizar: \n 1. URL´s Válidos \n 2. URL´s inválidos \n 3. Sair \n";
 
@@ -85,7 +110,7 @@ class ReportCommand extends Command
                     echo "Opção inválida. Por favor, escolha 1, 2 ou 3\n";
                     break;
             }
-        } while ($opcao != 3);
+        } while ($opcao != 3); */
 
         return Command::SUCCESS;
     }
