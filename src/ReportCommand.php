@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,67 +28,116 @@ class ReportCommand extends Command
         $baseUrl = $input->getArgument('baseUrl');
 
         $baseUrlCheck = self::checkUrlStatus($baseUrl);
-        
+
         if ($baseUrlCheck == "URL encontrada") {
 
-        //$baseUrl = "https://terranova-d10.pictonio.pt";
+            //$baseUrl = "https://terranova-d10.pictonio.pt";
 
-        // Read the XML File
-        $xmlFile = simplexml_load_file($input->getArgument('file'));
+            // Read the XML File
+            $xmlFile = simplexml_load_file($input->getArgument('file'));
+            $records = $xmlFile->count();
+            //$output->writeln("<warning>".$xmlFile->count()."</warning>");
 
-        if ($xmlFile === false) {
-            $output->writeln("<error>Não foi possível ler o arquivo XML</error>");
-            return Command::FAILURE;
-        }
-
-        $inactiveURLS = [];
-        $activeURLS = [];
-
-        $opcaoInput = $input->getArgument('int');
-
-        if ($opcaoInput != 1 && $opcaoInput != 2) {
-            $output->writeln("<error>Opção inválida. Por favor escolha 1 ou 2</error>");
-            return Command::FAILURE;
-        } else {
-
-            echo "A carregar resultados... \n";
-
-            // Loop to get all the href in the XML File
-            foreach ($xmlFile->node as $node) {
-                $href = (string) $node->title->a['href'];
-
-                $url = $baseUrl . $href;
-
-                //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
-
-                //$output->writeln($results);
-
-                $status = self::checkUrlStatus($url);
-
-                if ($status == "URL não encontrada (status 404)") {
-                    $inactiveURLS[] = $url;
-                    //echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
-                } elseif ($status == "URL encontrada") {
-                    $activeURLS[] = $url;
-                    //echo "URL encontrada: " . $url . PHP_EOL . "\n";
-                }
+            if ($xmlFile === false) {
+                $output->writeln("<error>Não foi possível ler o arquivo XML</error>");
+                return Command::FAILURE;
             }
 
-            if ($opcaoInput == 1) {
-                $output->writeln("Report de URL´s válidos.\n");
+            $inactiveURLS = [];
+            $activeURLS = [];
 
-                foreach ($activeURLS as $urlV) {
-                    $output->writeln($urlV);
+            $opcaoInput = $input->getArgument('int');
+
+            if ($opcaoInput != 1 && $opcaoInput != 2) {
+                $output->writeln("<error>Opção inválida. Por favor escolha 1 ou 2</error>");
+                return Command::FAILURE;
+            } else {
+
+                echo "A carregar resultados... \n";
+
+                $progressBar = new ProgressBar($output, $records);
+
+                /*
+                $pgb_25 = $records * 0.25;
+                $pgb_50 = $records * 0.50;
+                $pgb_75 = $records * 0.75;
+
+                $progressBarMessages = [
+                    1 => 'O seu processo ainda está no início',
+                    2 => 'O seu processo está metade completo',
+                    3 => 'Processo quase completo',
+                    4 => 'Processo completo',
+                ];*/
+                
+                //$progressBar->setBarCharacter('<comment>....</comment>');
+                $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
+                $progressBar->start();
+
+                // Loop to get all the href in the XML File
+                foreach ($xmlFile->node as $node) {
+                    $href = (string) $node->title->a['href'];
+
+                    $url = $baseUrl . $href;
+
+                    //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
+
+                    //$output->writeln($results);
+
+                    $status = self::checkUrlStatus($url);
+
+                    if ($status == "URL não encontrada (status 404)") {
+                        $inactiveURLS[] = $url;
+                        //echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
+                    } elseif ($status == "URL encontrada") {
+                        $activeURLS[] = $url;
+                        //echo "URL encontrada: " . $url . PHP_EOL . "\n";
+                    }
+
+                    $progressBar->advance();
+
+                    /*
+                    foreach ($progressBarMessages as $threshold => $message) {
+                        if ($progressBar->getProgress() == $threshold) {
+                            $progressBar->setMessage($message);
+                            $output->writeln('');
+                            $output->writeln("<info>$message</info>");
+                            break;
+                        }
+                    }
+
+                    if($pgb_25 == $progressBar -> getProgress()){
+                        $progressBar -> setMessage($progressBarMessages[1]);
+                        $output->writeln('');
+                        $output->writeln("<info>$progressBarMessages[1]</info>");
+                    }elseif($pgb_50 == $progressBar -> getProgress()){
+                        $progressBar -> setMessage($progressBarMessages[2]);
+                        $output->writeln('');
+                        $output->writeln("<info>$progressBarMessages[2]</info>");
+                    }elseif($pgb_75 == $progressBar -> getProgress()){
+                        $output->writeln('');
+                        $output->writeln("<info>$progressBarMessages[3]</info>");
+                    }elseif($records == $progressBar -> getProgress()){
+                        $output->writeln('');
+                        $output->writeln("<info>$progressBarMessages[4]</info>");
+                    }*/
+
                 }
-            } elseif ($opcaoInput == 2) {
-                $output->writeln("Report de URL´s inválidos.\n");
 
-                foreach ($inactiveURLS as $urlI) {
-                    $output->writeln($urlI);
+                if ($opcaoInput == 1) {
+                    $output->writeln("\n Report de URL´s válidos.\n");
+
+                    foreach ($activeURLS as $urlV) {
+                        $output->writeln($urlV);
+                    }
+                } elseif ($opcaoInput == 2) {
+                    $output->writeln("\n Report de URL´s inválidos.\n");
+
+                    foreach ($inactiveURLS as $urlI) {
+                        $output->writeln($urlI);
+                    }
                 }
             }
-        }
-        /*
+            /*
         do {
             echo "Escolha qual dos reports pretende visualizar: \n 1. URL´s Válidos \n 2. URL´s inválidos \n 3. Sair \n";
 
@@ -117,11 +167,11 @@ class ReportCommand extends Command
                     break;
             }
         } while ($opcao != 3); */
-
-    }elseif ($baseUrlCheck == "URL não encontrada (status 404)") {
-        $output->writeln("<error>URL não encontrada (status 404)</error>");
-        return Command::FAILURE;
-    }
+        } elseif ($baseUrlCheck == "URL não encontrada (status 404)") {
+            $output->writeln("<error>URL não encontrada (status 404)</error>");
+            return Command::FAILURE;
+        }
+        $progressBar->finish();
 
         return Command::SUCCESS;
     }
