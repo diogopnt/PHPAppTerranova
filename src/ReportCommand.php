@@ -16,6 +16,7 @@ class ReportCommand extends Command
     {
         $this
             ->setDescription('Report de URL´s falhados')
+            ->addArgument('baseUrl', InputArgument::REQUIRED, 'URL base a verificar')
             ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML')
             ->addArgument('int', InputArgument::REQUIRED, '1. URL´s Válidos 2. URL´s Inválidos')
             ->setHelp("Escolha entre 1 ou 2 para obter o report que pretende");
@@ -23,8 +24,13 @@ class ReportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // URL D10
-        $baseUrl = "https://terranova-d10.pictonio.pt";
+        $baseUrl = $input->getArgument('baseUrl');
+
+        $baseUrlCheck = self::checkUrlStatus($baseUrl);
+        
+        if ($baseUrlCheck == "URL encontrada") {
+
+        //$baseUrl = "https://terranova-d10.pictonio.pt";
 
         // Read the XML File
         $xmlFile = simplexml_load_file($input->getArgument('file'));
@@ -40,11 +46,11 @@ class ReportCommand extends Command
         $opcaoInput = $input->getArgument('int');
 
         if ($opcaoInput != 1 && $opcaoInput != 2) {
-            $output->writeln("Opção inválida. Por favor escolha 1 ou 2");
+            $output->writeln("<error>Opção inválida. Por favor escolha 1 ou 2</error>");
             return Command::FAILURE;
         } else {
 
-            echo "A carregar resultados...";
+            echo "A carregar resultados... \n";
 
             // Loop to get all the href in the XML File
             foreach ($xmlFile->node as $node) {
@@ -60,10 +66,10 @@ class ReportCommand extends Command
 
                 if ($status == "URL não encontrada (status 404)") {
                     $inactiveURLS[] = $url;
-                    echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
+                    //echo "URL não encontrada (status 404): " . $url . PHP_EOL . "\n";
                 } elseif ($status == "URL encontrada") {
                     $activeURLS[] = $url;
-                    echo "URL encontrada: " . $url . PHP_EOL . "\n";
+                    //echo "URL encontrada: " . $url . PHP_EOL . "\n";
                 }
             }
 
@@ -111,6 +117,11 @@ class ReportCommand extends Command
                     break;
             }
         } while ($opcao != 3); */
+
+    }elseif ($baseUrlCheck == "URL não encontrada (status 404)") {
+        $output->writeln("<error>URL não encontrada (status 404)</error>");
+        return Command::FAILURE;
+    }
 
         return Command::SUCCESS;
     }
