@@ -17,7 +17,9 @@ class TitleValidatorCommand extends Command
     {
         $this
             ->setDescription('Validador de page titles')
-            ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML');
+            ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML')
+            ->addArgument('int', InputArgument::REQUIRED, '1. Títulos iguais 2. Títulos diferentes')
+            ->setHelp("Escolha entre 1 ou 2 para obter o report que pretende");
     }
 
 
@@ -38,35 +40,58 @@ class TitleValidatorCommand extends Command
             return Command::FAILURE;
         }
 
-        foreach ($xmlFile->node as $node) {
-            $titleXML = (string) $node->title->a;
-            $href = (string) $node->title->a['href'];
+        $opcaoInput = $input->getArgument('int');
 
-            $url = $baseUrl . $href;
+        if ($opcaoInput != 1 && $opcaoInput != 2) {
+            $output->writeln("Opção inválida. Por favor escolha 1 ou 2");
+            return Command::FAILURE;
+        } else {
+            echo "A carregar resultados...";
 
-            $title = "Title: " . $titleXML . " | Terranova";
+            foreach ($xmlFile->node as $node) {
+                $titleXML = (string) $node->title->a;
+                $href = (string) $node->title->a['href'];
 
-            /*
-            $results = $url . PHP_EOL . "\n" . $title;
-            $output->writeln($results); */
+                $url = $baseUrl . $href;
 
-            $pageTitle = self::checkURLPageTitle($url);
+                $title = "Title: " . $titleXML . " | Terranova";
 
-            //echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
-            //echo $title . "\n";
+                /*
+                $results = $url . PHP_EOL . "\n" . $title;
+                $output->writeln($results); */
 
-            $result = self::comparePageTitle($title, $pageTitle);
+                $pageTitle = self::checkURLPageTitle($url);
 
-            if($result == "Titulos iguais"){
-                $spt[] = $pageTitle . " -> " . $url;
-                echo "Títulos iguais -> " . $url . "\n" ;
-            }elseif ($result == "Titulos diferentes"){
-                $dpt[] = $pageTitle . "-> " . $url;
-                echo "Títulos diferentes -> " . $url . "\n";
+                //echo "\n" . $pageTitle . PHP_EOL . "\n" . $url . "\n";
+                //echo $title . "\n";
+
+                $result = self::comparePageTitle($title, $pageTitle);
+
+                if ($result == "Titulos iguais") {
+                    $spt[] = $pageTitle . " -> " . $url;
+                    echo "Títulos iguais -> " . $url . "\n";
+                } elseif ($result == "Titulos diferentes") {
+                    $dpt[] = $pageTitle . "-> " . $url;
+                    echo "Títulos diferentes -> " . $url . "\n";
+                }
+            }
+
+            if ($opcaoInput == 1) {
+                $output->writeln("Report de Títulos iguais.\n");
+
+                foreach ($spt as $sptV) {
+                    $output->writeln($sptV);
+                }
+            } elseif ($opcaoInput == 2) {
+                $output->writeln("Report de Títulos diferentes.\n");
+
+                foreach ($dpt as $dptI) {
+                    $output->writeln($dptI);
+                }
             }
         }
 
-
+        /*
         do {
             echo "Escolha qual dos reports pretende visualizar: \n 1. Títulos iguais \n 2. Títulos diferentes \n 3. Sair \n";
 
@@ -95,7 +120,7 @@ class TitleValidatorCommand extends Command
                     echo "Opção inválida. Por favor, escolha 1, 2 ou 3\n";
                     break;
             }
-        } while ($opcao != 3);
+        } while ($opcao != 3);*/
 
         return Command::SUCCESS;
     }
@@ -142,11 +167,10 @@ class TitleValidatorCommand extends Command
 
     protected static function comparePageTitle($title, $urlPageTitle)
     {
-        if($title == $urlPageTitle){
+        if ($title == $urlPageTitle) {
             return "Titulos iguais";
-        }elseif ($title != $urlPageTitle){
+        } elseif ($title != $urlPageTitle) {
             return "Titulos diferentes";
         }
-
     }
 }
