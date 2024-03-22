@@ -62,12 +62,12 @@ class ReportCommand extends Command
                 $pgb_75 = $records * 0.75;
 
                 $progressBarMessages = [
-                    intval ($pgb_25) => 'O seu processo ainda está no início',
-                    intval ($pgb_50) => 'O seu processo encontra-se 50% concluído',
-                    intval ($pgb_75) => 'O seu processo está quase completo',
+                    intval($pgb_25) => 'O seu processo ainda está no início',
+                    intval($pgb_50) => 'O seu processo encontra-se 50% concluído',
+                    intval($pgb_75) => 'O seu processo está quase completo',
                     $records => 'Processo completo',
                 ];
-                
+
                 //$progressBar->setBarCharacter('<comment>....</comment>');
                 $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
                 $progressBar->start();
@@ -102,25 +102,6 @@ class ReportCommand extends Command
                             break;
                         }
                     }
-
-                    /*
-
-                    if($pgb_25 == $progressBar -> getProgress()){
-                        $progressBar -> setMessage($progressBarMessages[1]);
-                        $output->writeln('');
-                        $output->writeln("<info>$progressBarMessages[1]</info>");
-                    }elseif($pgb_50 == $progressBar -> getProgress()){
-                        $progressBar -> setMessage($progressBarMessages[2]);
-                        $output->writeln('');
-                        $output->writeln("<info>$progressBarMessages[2]</info>");
-                    }elseif($pgb_75 == $progressBar -> getProgress()){
-                        $output->writeln('');
-                        $output->writeln("<info>$progressBarMessages[3]</info>");
-                    }elseif($records == $progressBar -> getProgress()){
-                        $output->writeln('');
-                        $output->writeln("<info>$progressBarMessages[4]</info>");
-                    }*/
-
                 }
 
                 if ($opcaoInput == 1) {

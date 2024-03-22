@@ -58,6 +58,17 @@ class TitleValidatorCommand extends Command
 
                 $progressBar = new ProgressBar($output, $records);
 
+                $pgb_25 = $records * 0.25;
+                $pgb_50 = $records * 0.50;
+                $pgb_75 = $records * 0.75;
+
+                $progressBarMessages = [
+                    intval($pgb_25) => 'O seu processo ainda está no início',
+                    intval($pgb_50) => 'O seu processo encontra-se 50% concluído',
+                    intval($pgb_75) => 'O seu processo está quase completo',
+                    $records => 'Processo completo',
+                ];
+
                 //$progressBar->setBarCharacter('<comment>....</comment>');
                 $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:16s%/%estimated:-16s% %memory:6s%');
                 $progressBar->start();
@@ -71,8 +82,8 @@ class TitleValidatorCommand extends Command
                     $title = "Title: " . $titleXML . " | Terranova";
 
                     /*
-                $results = $url . PHP_EOL . "\n" . $title;
-                $output->writeln($results); */
+                    $results = $url . PHP_EOL . "\n" . $title;
+                    $output->writeln($results); */
 
                     $pageTitle = self::checkURLPageTitle($url);
 
@@ -90,6 +101,15 @@ class TitleValidatorCommand extends Command
                     }
 
                     $progressBar->advance();
+
+                    foreach ($progressBarMessages as $threshold => $message) {
+                        if ($progressBar->getProgress() == $threshold) {
+                            $progressBar->setMessage($message);
+                            $output->writeln('');
+                            $output->writeln("<info>$message</info>");
+                            break;
+                        }
+                    }
                 }
 
                 if ($opcaoInput == 1) {
