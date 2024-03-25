@@ -76,7 +76,9 @@ class ReportCommand extends Command
                 foreach ($xmlFile->node as $node) {
                     $href = (string) $node->title->a['href'];
 
-                    $url = $baseUrl . $href;
+                    $hrefNovo = self::urlPath($href);
+
+                    $url = $baseUrl . $hrefNovo;
 
                     //$results = $url . PHP_EOL . self::checkUrlStatus($url). "\n";
 
@@ -175,4 +177,27 @@ class ReportCommand extends Command
             return "Código de status HTTP desconhecido: $statusCode";
         }
     }
+
+    protected static function urlPath($href){
+        if (is_array($href)) { 
+            foreach ($href as $key => $hrefnode){
+                if (strpos($hrefnode, "/noticia") === 0){
+                    $href[$key] = str_replace("/noticia", "/noticias", $hrefnode);
+    
+                    return $href;
+                }else{
+                    return $href;
+                }
+            }
+        } else {
+            if (strpos($href, "/noticia") === 0) { 
+                return str_replace("/noticia", "/noticias", $href);
+            }else{
+                return $href;
+            }
+        }
+    
+        return $href;
+    }
+    
 }

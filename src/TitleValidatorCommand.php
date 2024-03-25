@@ -77,7 +77,9 @@ class TitleValidatorCommand extends Command
                     $titleXML = (string) $node->title->a;
                     $href = (string) $node->title->a['href'];
 
-                    $url = $baseUrl . $href;
+                    $hrefNovo = self::urlPath($href);
+
+                    $url = $baseUrl . $hrefNovo;
 
                     $title = "Title: " . $titleXML . " | Terranova";
 
@@ -214,5 +216,27 @@ class TitleValidatorCommand extends Command
         } elseif ($title != $urlPageTitle) {
             return "Titulos diferentes";
         }
+    }
+
+    protected static function urlPath($href){
+        if (is_array($href)) { 
+            foreach ($href as $key => $hrefnode){
+                if (strpos($hrefnode, "/noticia") === 0){
+                    $href[$key] = str_replace("/noticia", "/noticias", $hrefnode);
+    
+                    return $href;
+                }else{
+                    return $href;
+                }
+            }
+        } else {
+            if (strpos($href, "/noticia") === 0) { 
+                return str_replace("/noticia", "/noticias", $href);
+            }else{
+                return $href;
+            }
+        }
+    
+        return $href;
     }
 }
