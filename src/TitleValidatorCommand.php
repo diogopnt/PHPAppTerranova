@@ -74,6 +74,7 @@ class TitleValidatorCommand extends Command
                 $progressBar->start();
 
                 foreach ($xmlFile->node as $node) {
+                    $NID = (int) $node->Nid;
                     $titleXML = (string) $node->title->a;
                     $href = (string) $node->title->a['href'];
 
@@ -95,10 +96,10 @@ class TitleValidatorCommand extends Command
                     $result = self::comparePageTitle($title, $pageTitle);
 
                     if ($result == "Titulos iguais") {
-                        $spt[] = $pageTitle . " -> " . $url;
+                        $spt[] = $pageTitle . " -> " . $url . " | NID -> " . $NID;
                         //echo "Títulos iguais -> " . $url . "\n";
                     } elseif ($result == "Titulos diferentes") {
-                        $dpt[] = $pageTitle . "-> " . $url;
+                        $dpt[] = $pageTitle . "-> " . $url . " | NID -> " . $NID;
                         //echo "Títulos diferentes -> " . $url . "\n";
                     }
 

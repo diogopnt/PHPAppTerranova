@@ -74,6 +74,8 @@ class ReportCommand extends Command
 
                 // Loop to get all the href in the XML File
                 foreach ($xmlFile->node as $node) {
+                    $NID = (int) $node->Nid;
+              
                     $href = (string) $node->title->a['href'];
 
                     $hrefNovo = self::urlPath($href);
@@ -85,6 +87,8 @@ class ReportCommand extends Command
                     //$output->writeln($results);
 
                     $status = self::checkUrlStatus($url);
+
+                    $NIDPorURL[$url] = $NID;
 
                     if ($status == "URL não encontrada (status 404)") {
                         $inactiveURLS[] = $url;
@@ -110,13 +114,14 @@ class ReportCommand extends Command
                     $output->writeln("\n Report de URL´s válidos.\n");
 
                     foreach ($activeURLS as $urlV) {
-                        $output->writeln($urlV);
+                        $output->writeln($urlV . " | NID -> " . $NIDPorURL[$urlV]); 
                     }
                 } elseif ($opcaoInput == 2) {
                     $output->writeln("\n Report de URL´s inválidos.\n");
 
                     foreach ($inactiveURLS as $urlI) {
-                        $output->writeln($urlI);
+                        $output->writeln($urlI . " | NID -> " . $NIDPorURL[$urlI]);
+                           
                     }
                 }
             }
