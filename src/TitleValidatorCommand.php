@@ -95,11 +95,13 @@ class TitleValidatorCommand extends Command
 
                     $result = self::comparePageTitle($title, $pageTitle);
 
+                    $NIDPorURL[$url] = $NID;
+
                     if ($result == "Titulos iguais") {
-                        $spt[] = $pageTitle . " -> " . $url . " | NID -> " . $NID;
+                        $spt[] = $url;
                         //echo "Títulos iguais -> " . $url . "\n";
                     } elseif ($result == "Titulos diferentes") {
-                        $dpt[] = $pageTitle . "-> " . $url . " | NID -> " . $NID;
+                        $dpt[] = $url;
                         //echo "Títulos diferentes -> " . $url . "\n";
                     }
 
@@ -116,27 +118,57 @@ class TitleValidatorCommand extends Command
                 }
 
                 if ($opcaoInput == 1) {
-                    $output->writeln(" \n Report de Títulos iguais.\n");
                     $numberSPT = count($spt);
-                    $numberSPTP = count($spt);
+                    $numberSPTP = $numberSPT / $records * 100;
 
+                    $outputData = [
+                        'report' => 'Report de Titulos iguais.',
+                        'titles' => []
+                    ];
+
+                    foreach ($spt as $sptV){
+                        $outputData['titles'][] = [
+                            'URL' => $sptV,
+                            'NID' => $NIDPorURL[$sptV]
+                        ];
+                    }
+
+                    /*
                     foreach ($spt as $sptV) {
                         $output->writeln($sptV);
-                    }
+                    }*/
 
                     $output->writeln($numberSPT . " títulos iguais de " . $records . " | " . $numberSPTP . "%");
                 } elseif ($opcaoInput == 2) {
-                    $output->writeln("\n Report de Títulos diferentes.\n");
+                    //$output->writeln("\n Report de Títulos diferentes.\n");
                     $numberDPT = count($dpt);
                     $numberDPTP = $numberDPT / $records * 100;
 
-                    foreach ($dpt as $dptI) {
-                        $output->writeln($dptI);
+                    $outputData = [
+                        'report' => 'Report de Titulos diferentes.',
+                        'titles' => []
+                    ];
+
+                    foreach ($dpt as $dptI){
+                        $outputData['titles'][] = [
+                            'URL' => $dptI,
+                            'Title' => $pageTitle,
+                            'NID' => $NIDPorURL[$dptI]
+                        ];
                     }
 
-                    $output->writeln($numberDPT . " títulos diferentes de " . $records . " | " . $numberDPTP . "%");
+                    /*
+                    foreach ($dpt as $dptI) {
+                        $output->writeln($dptI);
+                    }*/
+
+                    $output->writeln($numberDPT . " títulos diferentes de " . $records . " | " . $numberDPTP . "%"); 
 
                 }
+
+                $jsonOutput = json_encode($outputData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+                $output->writeln($jsonOutput);
             }
 
             /*
@@ -186,7 +218,7 @@ class TitleValidatorCommand extends Command
         $status = self::checkUrlStatus($url);
 
         if ($status == "URL não encontrada (status 404)") {
-            return "Página não encontrada";
+            return "Pagina nao encontrada";
         } elseif ($status == "URL encontrada") {
             $html = file_get_contents($url);
             preg_match("/<title>(.+)<\/title>/i", $html, $title);

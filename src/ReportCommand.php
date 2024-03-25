@@ -75,7 +75,7 @@ class ReportCommand extends Command
                 // Loop to get all the href in the XML File
                 foreach ($xmlFile->node as $node) {
                     $NID = (int) $node->Nid;
-              
+
                     $href = (string) $node->title->a['href'];
 
                     $hrefNovo = self::urlPath($href);
@@ -111,27 +111,57 @@ class ReportCommand extends Command
                 }
 
                 if ($opcaoInput == 1) {
-                    $output->writeln("\n Report de URL´s válidos.\n");
+                    //$output->writeln("\n Report de URL´s válidos.\n");
                     $numberACTUrl = count($activeURLS);
                     $numberACTUrlP = $numberACTUrl / $records * 100;
 
+                    $outputData = [
+                        'report' => 'Report de URL validos.',
+                        'urls' => []
+                    ];
+
+                    foreach($activeURLS as $urlV){
+                        $outputData['urls'][] = [
+                            'URL' => $urlV,
+                            'NID' => $NIDPorURL[$urlV]
+                        ];
+                    }
+
+                    /*
                     foreach ($activeURLS as $urlV) {
                         $output->writeln($urlV . " | NID -> " . $NIDPorURL[$urlV]);
-                    }
+                    }*/
 
                     $output->writeln($numberACTUrl . " URL´S válidos de " . $records . " | " . $numberACTUrlP . "%");
 
                 } elseif ($opcaoInput == 2) {
-                    $output->writeln("\n Report de URL´s inválidos.\n");
+                    //$output->writeln("\n Report de URL´s inválidos.\n");
                     $numberIACTUrl = count($inactiveURLS);
                     $numberIACTUrlP = $numberIACTUrl / $records * 100;
 
+                    /*
                     foreach ($inactiveURLS as $urlI) {
                         $output->writeln($urlI . " | NID -> " . $NIDPorURL[$urlI]);   
+                    } */
+
+                    $outputData = [
+                        'report' => 'Report de URLs invalidos.',
+                        'urls' => []
+                    ];
+
+                    foreach ($inactiveURLS as $urlI) {
+                        $outputData['urls'][] = [
+                            'URL' => $urlI,
+                            'NID' => $NIDPorURL[$urlI]
+                        ];
                     }
 
                     $output->writeln($numberIACTUrl . " URL´s inválidos de " . $records . " | " . $numberIACTUrlP . "%");
                 }
+
+                $jsonOutput = json_encode($outputData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+                $output->writeln($jsonOutput);
             }
             /*
         do {
@@ -191,26 +221,26 @@ class ReportCommand extends Command
         }
     }
 
-    protected static function urlPath($href){
-        if (is_array($href)) { 
-            foreach ($href as $key => $hrefnode){
-                if (strpos($hrefnode, "/noticia") === 0){
+    protected static function urlPath($href)
+    {
+        if (is_array($href)) {
+            foreach ($href as $key => $hrefnode) {
+                if (strpos($hrefnode, "/noticia") === 0) {
                     $href[$key] = str_replace("/noticia", "/noticias", $hrefnode);
-    
+
                     return $href;
-                }else{
+                } else {
                     return $href;
                 }
             }
         } else {
-            if (strpos($href, "/noticia") === 0) { 
+            if (strpos($href, "/noticia") === 0) {
                 return str_replace("/noticia", "/noticias", $href);
-            }else{
+            } else {
                 return $href;
             }
         }
-    
+
         return $href;
     }
-    
 }
