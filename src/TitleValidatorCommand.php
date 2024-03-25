@@ -118,21 +118,24 @@ class TitleValidatorCommand extends Command
                 if ($opcaoInput == 1) {
                     $output->writeln(" \n Report de Títulos iguais.\n");
                     $numberSPT = count($spt);
+                    $numberSPTP = count($spt);
 
                     foreach ($spt as $sptV) {
                         $output->writeln($sptV);
                     }
 
-                    $output->writeln($numberSPT . " títulos iguais de " . $records);
+                    $output->writeln($numberSPT . " títulos iguais de " . $records . " | " . $numberSPTP . "%");
                 } elseif ($opcaoInput == 2) {
                     $output->writeln("\n Report de Títulos diferentes.\n");
                     $numberDPT = count($dpt);
+                    $numberDPTP = $numberDPT / $records * 100;
 
                     foreach ($dpt as $dptI) {
                         $output->writeln($dptI);
                     }
 
-                    $output->writeln($numberDPT . "títulos diferentes de " . $records);
+                    $output->writeln($numberDPT . " títulos diferentes de " . $records . " | " . $numberDPTP . "%");
+
                 }
             }
 

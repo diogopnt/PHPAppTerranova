@@ -113,22 +113,24 @@ class ReportCommand extends Command
                 if ($opcaoInput == 1) {
                     $output->writeln("\n Report de URL´s válidos.\n");
                     $numberACTUrl = count($activeURLS);
+                    $numberACTUrlP = $numberACTUrl / $records * 100;
 
                     foreach ($activeURLS as $urlV) {
                         $output->writeln($urlV . " | NID -> " . $NIDPorURL[$urlV]);
                     }
 
-                    $output->writeln($numberACTUrl . " URL´S válidos de " . $records);
-                    
+                    $output->writeln($numberACTUrl . " URL´S válidos de " . $records . " | " . $numberACTUrlP . "%");
+
                 } elseif ($opcaoInput == 2) {
                     $output->writeln("\n Report de URL´s inválidos.\n");
                     $numberIACTUrl = count($inactiveURLS);
+                    $numberIACTUrlP = $numberIACTUrl / $records * 100;
 
                     foreach ($inactiveURLS as $urlI) {
                         $output->writeln($urlI . " | NID -> " . $NIDPorURL[$urlI]);   
                     }
 
-                    $output->writeln($numberIACTUrl . " URL´s inválidos de " . $records);
+                    $output->writeln($numberIACTUrl . " URL´s inválidos de " . $records . " | " . $numberIACTUrlP . "%");
                 }
             }
             /*
