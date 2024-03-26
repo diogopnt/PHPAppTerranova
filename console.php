@@ -14,6 +14,6 @@ $app = new Application();
 
 
 $app->add(new ReportCommand());
-$app->add(new TitleValidatorCommand()); //falta dar -> composer update
+$app->add(new TitleValidatorCommand());
 
 $app->run();

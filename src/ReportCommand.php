@@ -16,11 +16,11 @@ class ReportCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Report de URL´s falhados')
+            ->setDescription('Report de URL´s')
             ->addArgument('baseUrl', InputArgument::REQUIRED, 'URL base a verificar')
             ->addArgument('file', InputArgument::REQUIRED, 'Ficheiro XML')
-            ->addArgument('int', InputArgument::REQUIRED, '1. URL´s Válidos 2. URL´s Inválidos')
-            ->setHelp("Escolha entre 1 ou 2 para obter o report que pretende");
+            ->addArgument('int', InputArgument::REQUIRED, '1. URL´s Válidos 2. URL´s Inválidos 3. Outro tipo de URL´s')
+            ->setHelp("Escolha entre 1,2 ou 3 para obter o report que pretende");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -45,11 +45,12 @@ class ReportCommand extends Command
 
             $inactiveURLS = [];
             $activeURLS = [];
+            $othersURLS = [];
 
             $opcaoInput = $input->getArgument('int');
 
-            if ($opcaoInput != 1 && $opcaoInput != 2) {
-                $output->writeln("<error>Opção inválida. Por favor escolha 1 ou 2</error>");
+            if ($opcaoInput != 1 && $opcaoInput != 2 && $opcaoInput != 3) {
+                $output->writeln("<error>Opção inválida. Por favor escolha 1,2 ou 3</error>");
                 return Command::FAILURE;
             } else {
 
@@ -87,8 +88,10 @@ class ReportCommand extends Command
                     //$output->writeln($results);
 
                     $status = self::checkUrlStatus($url);
+                    $statusCodeInt = self::statusCode($url);
 
                     $NIDPorURL[$url] = $NID;
+                    $StatusPorUrl[$url] = $statusCodeInt;
 
                     if ($status == "URL não encontrada (status 404)") {
                         $inactiveURLS[] = $url;
@@ -96,6 +99,8 @@ class ReportCommand extends Command
                     } elseif ($status == "URL encontrada") {
                         $activeURLS[] = $url;
                         //echo "URL encontrada: " . $url . PHP_EOL . "\n";
+                    } elseif ($status == "Código de status HTTP desconhecido") {
+                        $othersURLS[] = $url;
                     }
 
                     $progressBar->advance();
@@ -120,7 +125,7 @@ class ReportCommand extends Command
                         'urls' => []
                     ];
 
-                    foreach($activeURLS as $urlV){
+                    foreach ($activeURLS as $urlV) {
                         $outputData['urls'][] = [
                             'URL' => $urlV,
                             'NID' => $NIDPorURL[$urlV]
@@ -133,7 +138,6 @@ class ReportCommand extends Command
                     }*/
 
                     $output->writeln($numberACTUrl . " URL´S válidos de " . $records . " | " . $numberACTUrlP . "%");
-
                 } elseif ($opcaoInput == 2) {
                     //$output->writeln("\n Report de URL´s inválidos.\n");
                     $numberIACTUrl = count($inactiveURLS);
@@ -157,6 +161,24 @@ class ReportCommand extends Command
                     }
 
                     $output->writeln($numberIACTUrl . " URL´s inválidos de " . $records . " | " . $numberIACTUrlP . "%");
+                } elseif ($opcaoInput == 3) {
+                    $numberOUrl = count($othersURLS);
+                    $numberOUrlP = $numberOUrl / $records * 100;
+
+                    $outputData = [
+                        'report' => 'Report de outro tipo de URLs.',
+                        'urls' => []
+                    ];
+
+                    foreach ($othersURLS as $urlO) {
+                        $outputData['urls'][] = [
+                            'URL' => $urlO,
+                            'NID' => $NIDPorURL[$urlO],
+                            'Status code' => $StatusPorUrl[$urlO]
+                        ];
+                    }
+
+                    $output->writeln($numberOUrl . " URL´s com o código de status HTTP desconhecido de " . $records . " | " . $numberOUrlP . "%");
                 }
 
                 $jsonOutput = json_encode($outputData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
@@ -212,12 +234,13 @@ class ReportCommand extends Command
 
         $statusCode = explode(' ', $headers[0])[1];
 
-        if ($statusCode == '200' || $statusCode == '302') {
+        if ($statusCode == '200') {
             return "URL encontrada";
         } elseif ($statusCode == '404') {
             return "URL não encontrada (status 404)";
         } else {
-            return "Código de status HTTP desconhecido: $statusCode";
+            return "Código de status HTTP desconhecido";
+            //return "Código de status HTTP desconhecido: $statusCode";
         }
     }
 
@@ -242,5 +265,18 @@ class ReportCommand extends Command
         }
 
         return $href;
+    }
+
+    protected function statusCode($url)
+    {
+        $headers = get_headers($url);
+
+        if ($headers === false) {
+            return "Erro ao obter os cabeçalhos HTTP";
+        }
+
+        $statusCode = explode(' ', $headers[0])[1];
+
+        return $statusCode;
     }
 }
