@@ -1,0 +1,20 @@
+A carregar resultados... 
+
+O seu processo ainda está no início
+
+O seu processo encontra-se 50% concluído
+
+O seu processo está quase completo
+
+Processo completo
+1 URL´s com o código de status HTTP desconhecido de 50009 | 0.0019996400647883%
+{
+    "report": "Report de outro tipo de URLs.",
+    "urls": [
+        {
+            "URL": "https://terranova-d10.pictonio.pt/noticias/politica/aveiro-agueda-pode-chegar-aos-130-milhoes-de-euros-de-custo",
+            "NID": 55542,
+            "Status code": "404"
+        }
+    ]
+}
