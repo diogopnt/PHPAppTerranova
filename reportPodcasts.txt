@@ -1,12 +1,3 @@
-A carregar resultados... 
-
-O seu processo ainda está no início
-
-O seu processo encontra-se 50% concluído
-
-O seu processo está quase completo
-
-Processo completo
 1371 Podcast´s inválidos de 12132 | 11.300692383778%
 {
     "report": "Report de Podcasts invalidos.",
