@@ -5,6 +5,7 @@
 require __DIR__.'/vendor/autoload.php';
 
 use App\Command\ReportCommand;
+use App\Command\ReportPodcastCommand;
 use App\Command\TitleValidatorCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\HelpCommand;
@@ -15,5 +16,6 @@ $app = new Application();
 
 $app->add(new ReportCommand());
 $app->add(new TitleValidatorCommand());
+$app->add(new ReportPodcastCommand());
 
 $app->run();
