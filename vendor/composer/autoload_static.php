@@ -77,6 +77,7 @@ class ComposerStaticInit8bd5477be28b7ac6bb652a497395f3c3
 
     public static $classMap = array (
         'App\\Command\\ReportCommand' => __DIR__ . '/../..' . '/src/ReportCommand.php',
+        'App\\Command\\ReportCommand_v2' => __DIR__ . '/../..' . '/src/ReportCommand_v2.php',
         'App\\Command\\ReportPodcastCommand' => __DIR__ . '/../..' . '/src/ReportPodcastCommand.php',
         'App\\Command\\TitleValidatorCommand' => __DIR__ . '/../..' . '/src/TitleValidatorCommand.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',

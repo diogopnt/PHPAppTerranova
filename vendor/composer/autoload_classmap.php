@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Command\\ReportCommand' => $baseDir . '/src/ReportCommand.php',
+    'App\\Command\\ReportCommand_v2' => $baseDir . '/src/ReportCommand_v2.php',
     'App\\Command\\ReportPodcastCommand' => $baseDir . '/src/ReportPodcastCommand.php',
     'App\\Command\\TitleValidatorCommand' => $baseDir . '/src/TitleValidatorCommand.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
