@@ -1,0 +1,14 @@
+A carregar resultados... 
+
+O seu processo ainda está no início
+
+O seu processo encontra-se 50% concluído
+
+O seu processo está quase completo
+
+Processo completo
+0 URL´s inválidos de 51101 | 0%
+{
+    "report": "Report de URLs invalidos.",
+    "urls": []
+}
